@@ -1,19 +1,10 @@
-import requests
 import pandas as pd
+from src.extractTransform import requestApiBcb
+from src.load import salvarCsv, salvarSQLite, salvarMySQL
 
-def requestApiBcb(data):
-    """
-    Funcao para extrair os dados dos meios de pagamentos trimestrais do Banco Central
+dadosBcb = requestApiBcb("20191")
+# salvarCsv(dadosBcb, "etlBCB/src/datasetsmeiosPagamentosTri.csv", ";", ".")
 
-    Parametros:
-    data - string - aaaat (Exemplo: 20191)
-    """
-    url = f"https://olinda.bcb.gov.br/olinda/servico/MPV_DadosAbertos/versao/v1/odata/MeiosdePagamentosTrimestralDA(trimestre=@trimestre)?@trimestre='{data}'&$format=json"
-    
-    req = requests.get(url)
-    dados = req.json()
-    
-    df = pd.json_normalize(dados['value'])
-    return print(df)
+salvarSQLite(dadosBcb, "etlBCB/src/datasets/etlbcb.db", "meios_pagamentos_tri")
 
-requestApiBcb('20241')
+# salvarMySQL(dadosBcb, "root", "teste", "localhost", "etlbcb", "meios_pagamentos_tri")
